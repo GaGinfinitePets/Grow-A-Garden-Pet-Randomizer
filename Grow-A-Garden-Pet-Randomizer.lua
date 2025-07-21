@@ -26,30 +26,47 @@ local function getRandomPet(pets)
     return pets[math.random(1, #pets)]
 end
 
+-- Helper pour obtenir la Part principale d'un Model
+local function getMainPart(model)
+    for _, child in ipairs(model:GetChildren()) do
+        if child:IsA("BasePart") then
+            return child
+        end
+    end
+    return nil
+end
+
+-- Affiche le nom du pet au-dessus de chaque œuf (Model ou Part)
 local function showEggPets()
     for eggName, petList in pairs(eggs) do
         for _, egg in ipairs(workspace:GetChildren()) do
-            if egg.Name == eggName then
-                local gui = egg:FindFirstChild("PetESP")
-                if gui then gui:Destroy() end
-                local billboard = Instance.new("BillboardGui")
-                billboard.Name = "PetESP"
-                billboard.Size = UDim2.new(0, 110, 0, 18)
-                billboard.StudsOffset = Vector3.new(0, 3, 0)
-                billboard.Adornee = egg
-                billboard.AlwaysOnTop = true
-                billboard.Parent = egg
+            if egg.Name == eggName or egg.Name == eggName.."Egg" or egg.Name == "CommonEgg" then
+                local adornee = egg
+                if egg:IsA("Model") then
+                    adornee = getMainPart(egg)
+                end
+                if adornee then
+                    local gui = adornee:FindFirstChild("PetESP")
+                    if gui then gui:Destroy() end
+                    local billboard = Instance.new("BillboardGui")
+                    billboard.Name = "PetESP"
+                    billboard.Size = UDim2.new(0, 110, 0, 18)
+                    billboard.StudsOffset = Vector3.new(0, 3, 0)
+                    billboard.Adornee = adornee
+                    billboard.AlwaysOnTop = true
+                    billboard.Parent = adornee
 
-                local text = Instance.new("TextLabel")
-                text.Size = UDim2.new(1, 0, 1, 0)
-                text.BackgroundTransparency = 1
-                text.Text = getRandomPet(petList)
-                text.TextColor3 = Color3.fromRGB(255, 255, 0)
-                text.TextStrokeTransparency = 0.5
-                text.TextScaled = false
-                text.TextSize = 13
-                text.Font = Enum.Font.GothamBold
-                text.Parent = billboard
+                    local text = Instance.new("TextLabel")
+                    text.Size = UDim2.new(1, 0, 1, 0)
+                    text.BackgroundTransparency = 1
+                    text.Text = getRandomPet(petList)
+                    text.TextColor3 = Color3.fromRGB(255, 255, 0)
+                    text.TextStrokeTransparency = 0.5
+                    text.TextScaled = false
+                    text.TextSize = 13
+                    text.Font = Enum.Font.GothamBold
+                    text.Parent = billboard
+                end
             end
         end
     end
@@ -58,12 +75,18 @@ end
 local function randomizeEggPets()
     for eggName, petList in pairs(eggs) do
         for _, egg in ipairs(workspace:GetChildren()) do
-            if egg.Name == eggName then
-                local billboard = egg:FindFirstChild("PetESP")
-                if billboard and billboard:IsA("BillboardGui") then
-                    local text = billboard:FindFirstChildOfClass("TextLabel")
-                    if text then
-                        text.Text = getRandomPet(petList)
+            if egg.Name == eggName or egg.Name == eggName.."Egg" or egg.Name == "CommonEgg" then
+                local adornee = egg
+                if egg:IsA("Model") then
+                    adornee = getMainPart(egg)
+                end
+                if adornee then
+                    local billboard = adornee:FindFirstChild("PetESP")
+                    if billboard and billboard:IsA("BillboardGui") then
+                        local text = billboard:FindFirstChildOfClass("TextLabel")
+                        if text then
+                            text.Text = getRandomPet(petList)
+                        end
                     end
                 end
             end
@@ -72,16 +95,19 @@ local function randomizeEggPets()
 end
 
 local function removeEggPets()
-    for eggName, _ in pairs(eggs) do
-        for _, egg in ipairs(workspace:GetChildren()) do
-            if egg.Name == eggName then
-                local gui = egg:FindFirstChild("PetESP")
-                if gui then gui:Destroy() end
-            end
+    for _, egg in ipairs(workspace:GetChildren()) do
+        local adornee = egg
+        if egg:IsA("Model") then
+            adornee = getMainPart(egg)
+        end
+        if adornee then
+            local gui = adornee:FindFirstChild("PetESP")
+            if gui then gui:Destroy() end
         end
     end
 end
 
+-- UI minimaliste
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "EggESPUI"
 ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
@@ -134,7 +160,3 @@ randomBtn.MouseButton1Click:Connect(function()
 end)
 
 showEggPets()
-info.Parent = mainFrame
-
--- ESP au lancement
-createESP()
