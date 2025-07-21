@@ -26,13 +26,12 @@ local function getRandomPet(pets)
     return pets[math.random(1, #pets)]
 end
 
--- ESP permanent pour chaque egg
-local function createESP()
+local function showEggPets()
     for eggName, petList in pairs(eggs) do
         for _, egg in ipairs(workspace:GetChildren()) do
             if egg.Name == eggName then
-                local esp = egg:FindFirstChild("PetESP")
-                if esp then esp:Destroy() end
+                local gui = egg:FindFirstChild("PetESP")
+                if gui then gui:Destroy() end
                 local billboard = Instance.new("BillboardGui")
                 billboard.Name = "PetESP"
                 billboard.Size = UDim2.new(0, 110, 0, 18)
@@ -48,15 +47,15 @@ local function createESP()
                 text.TextColor3 = Color3.fromRGB(255, 255, 0)
                 text.TextStrokeTransparency = 0.5
                 text.TextScaled = false
+                text.TextSize = 13
                 text.Font = Enum.Font.GothamBold
-                text.TextSize = 11 -- TEXTE PETIT !
                 text.Parent = billboard
             end
         end
     end
 end
 
-local function updateESP()
+local function randomizeEggPets()
     for eggName, petList in pairs(eggs) do
         for _, egg in ipairs(workspace:GetChildren()) do
             if egg.Name == eggName then
@@ -72,25 +71,24 @@ local function updateESP()
     end
 end
 
-local function removeESP()
+local function removeEggPets()
     for eggName, _ in pairs(eggs) do
         for _, egg in ipairs(workspace:GetChildren()) do
             if egg.Name == eggName then
-                local billboard = egg:FindFirstChild("PetESP")
-                if billboard then billboard:Destroy() end
+                local gui = egg:FindFirstChild("PetESP")
+                if gui then gui:Destroy() end
             end
         end
     end
 end
 
--- UI
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "EggESPUI"
 ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 240, 0, 130) -- UI UN PEU PLUS GROS !
-mainFrame.Position = UDim2.new(0.5, -120, 0.5, -65)
+mainFrame.Size = UDim2.new(0, 220, 0, 80)
+mainFrame.Position = UDim2.new(0.5, -110, 0.5, -40)
 mainFrame.BackgroundColor3 = Color3.fromRGB(121, 77, 44)
 mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
@@ -98,11 +96,11 @@ mainFrame.Draggable = true
 mainFrame.Parent = ScreenGui
 
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 32)
+title.Size = UDim2.new(1, 0, 0, 28)
 title.Position = UDim2.new(0, 0, 0, 0)
 title.BackgroundColor3 = Color3.fromRGB(102, 220, 105)
 title.BorderSizePixel = 0
-title.Text = "Egg Pet ESP"
+title.Text = "Pets randomizer"
 title.TextColor3 = Color3.fromRGB(255,255,255)
 title.TextScaled = true
 title.Font = Enum.Font.GothamBold
@@ -110,7 +108,7 @@ title.Parent = mainFrame
 
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0, 22, 0, 22)
-closeButton.Position = UDim2.new(1, -26, 0, 5)
+closeButton.Position = UDim2.new(1, -26, 0, 3)
 closeButton.BackgroundColor3 = Color3.fromRGB(255, 95, 95)
 closeButton.Text = "X"
 closeButton.TextColor3 = Color3.fromRGB(255,255,255)
@@ -118,36 +116,24 @@ closeButton.TextScaled = true
 closeButton.Font = Enum.Font.GothamBold
 closeButton.Parent = mainFrame
 closeButton.MouseButton1Click:Connect(function()
-    removeESP()
+    removeEggPets()
     ScreenGui:Destroy()
 end)
 
 local randomBtn = Instance.new("TextButton")
 randomBtn.Size = UDim2.new(0.85, 0, 0, 36)
-randomBtn.Position = UDim2.new(0.075, 0, 0.42, 0)
+randomBtn.Position = UDim2.new(0.075, 0, 0.43, 0)
 randomBtn.BackgroundColor3 = Color3.fromRGB(56, 160, 255)
-randomBtn.Text = "Refresh ESP"
+randomBtn.Text = "Randomize pets"
 randomBtn.TextColor3 = Color3.fromRGB(255,255,255)
 randomBtn.TextScaled = true
 randomBtn.Font = Enum.Font.GothamBold
 randomBtn.Parent = mainFrame
 randomBtn.MouseButton1Click:Connect(function()
-    updateESP()
+    randomizeEggPets()
 end)
 
-local info = Instance.new("TextLabel")
-info.Size = UDim2.new(1, -16, 0, 24)
-info.Position = UDim2.new(0, 8, 1, -28)
-info.BackgroundTransparency = 1
-info.Text = "Les noms sont petits et l'ESP est permanent.\nFerme l'UI pour tout retirer."
-info.TextColor3 = Color3.fromRGB(255,255,255)
-info.TextScaled = false
-info.TextSize = 13
-info.Font = Enum.Font.Gotham
-info.Parent = mainFrame
-
--- ESP au lancement
-createESP()
+showEggPets()
 info.Parent = mainFrame
 
 -- ESP au lancement
