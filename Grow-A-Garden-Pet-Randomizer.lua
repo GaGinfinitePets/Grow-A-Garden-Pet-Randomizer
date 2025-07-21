@@ -148,3 +148,7 @@ info.Parent = mainFrame
 
 -- ESP au lancement
 createESP()
+info.Parent = mainFrame
+
+-- ESP au lancement
+createESP()
